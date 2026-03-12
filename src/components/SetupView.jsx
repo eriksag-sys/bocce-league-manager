@@ -12,10 +12,21 @@ export default function SetupView({ seasonDates, setSeasonDates, holidays, setHo
   const sd = seasonDates[activeSeason] || { start: "", end: "" };
   const hols = holidays[activeSeason] || [];
 
-  const startEdit = (key) => { setEditing(key); setDraft([...(leagueTeams[`${activeSeason}_${key}`] || emptyTeams())]); };
+  const startEdit = (key) => { 
+    setEditing(key); 
+    const existing = leagueTeams[`${activeSeason}_${key}`] || emptyTeams();
+    const migrated = existing.map((t, i) => typeof t === 'string' ? { name: t, division: i < 10 ? 'upper' : 'lower' } : { ...t });
+    setDraft(migrated); 
+  };
   const saveTeams = () => { setLeagueTeams((p) => ({ ...p, [`${activeSeason}_${editing}`]: [...draft] })); setEditing(null); };
   const fillRandom = () => setDraft(getRandomTeams());
-  const teamsCount = (key) => (leagueTeams[`${activeSeason}_${key}`] || []).filter((t) => t.trim()).length;
+  const teamsCount = (key) => {
+    const teams = leagueTeams[`${activeSeason}_${key}`] || [];
+    const valid = teams.filter((t) => typeof t === 'string' ? t.trim() : t.name.trim());
+    const upper = valid.filter((t, i) => (typeof t === 'string' ? i < 10 : t.division === 'upper')).length;
+    const lower = valid.filter((t, i) => (typeof t === 'string' ? i >= 10 : t.division === 'lower')).length;
+    return { total: valid.length, upper, lower };
+  };
 
   const dayLeagues = Object.entries(LEAGUE_CONFIGS).filter(([, v]) => v.type === "daytime");
   const eveLeagues = Object.entries(LEAGUE_CONFIGS).filter(([, v]) => v.type === "evening");
@@ -37,11 +48,14 @@ export default function SetupView({ seasonDates, setSeasonDates, holidays, setHo
           {cfg.type === "daytime" ? "3 frames to 10 points" : "3 frames to 12 points"}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-          {draft.map((name, i) => (
+          {draft.map((team, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ color: colors.MUTED, fontWeight: 700, fontSize: 12, minWidth: 22, textAlign: "right" }}>{i + 1}.</span>
-              <input style={{ background: colors.INPUT_BG, border: `1px solid ${colors.BORDER}`, borderRadius: 6, padding: "7px 10px", color: colors.INPUT_COLOR, fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" }} placeholder={`Team ${i + 1}`} value={name}
-                onChange={(e) => { const c = [...draft]; c[i] = e.target.value; setDraft(c); }} />
+              <input style={{ background: colors.INPUT_BG, border: `1px solid ${colors.BORDER}`, borderRadius: 6, padding: "7px 10px", color: colors.INPUT_COLOR, fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" }} placeholder={`Team ${i + 1}`} value={team.name}
+                onChange={(e) => { const c = [...draft]; c[i].name = e.target.value; setDraft(c); }} />
+              <button title="Click to change division" onClick={() => { const c = [...draft]; c[i].division = c[i].division === "upper" ? "lower" : "upper"; setDraft(c); }} style={{ background: team.division === "upper" ? colors.BLUE : colors.CARD, color: team.division === "upper" ? "#fff" : colors.MUTED, border: `1px solid ${team.division === "upper" ? colors.BLUE : colors.BORDER}`, borderRadius: 6, padding: "5px 4px", fontSize: 10, fontWeight: 800, cursor: "pointer", minWidth: 44 }}>
+                {team.division === "upper" ? "UP" : "LOW"}
+              </button>
             </div>
           ))}
         </div>
@@ -106,14 +120,15 @@ export default function SetupView({ seasonDates, setSeasonDates, holidays, setHo
         <h3 style={{ fontSize: 16, fontWeight: 800, color: colors.TEXT, margin: "0 0 10px 0" }}>Daytime Leagues — 3 Frames to 10</h3>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {dayLeagues.map(([key, cfg]) => {
-            const n = teamsCount(key), ok = n === 20;
+            const counts = teamsCount(key);
+            const ok = counts.upper === 10 && counts.lower === 10;
             return (
               <button key={key} onClick={() => startEdit(key)} style={{
                 flex: 1, minWidth: 160, background: ok ? colors.DONE_BG : colors.INPUT_BG,
                 border: `2px solid ${ok ? colors.GREEN : colors.BORDER}`, borderRadius: 10, padding: 14, cursor: "pointer", textAlign: "left",
               }}>
                 <div style={{ color: colors.TEXT, fontWeight: 800, fontSize: 15 }}>☀️ {cfg.label}</div>
-                <div style={{ color: ok ? colors.GREEN : colors.MUTED, fontSize: 12, marginTop: 3 }}>{n}/20 teams {ok && "✔"}</div>
+                <div style={{ color: ok ? colors.GREEN : colors.MUTED, fontSize: 12, marginTop: 3 }}>{counts.total}/20 ({counts.upper}U, {counts.lower}L) {ok && "✔"}</div>
               </button>
             );
           })}
@@ -124,14 +139,15 @@ export default function SetupView({ seasonDates, setSeasonDates, holidays, setHo
         <h3 style={{ fontSize: 16, fontWeight: 800, color: colors.TEXT, margin: "0 0 10px 0" }}>Evening Leagues — 3 Frames to 12</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
           {eveLeagues.map(([key, cfg]) => {
-            const n = teamsCount(key), ok = n === 20;
+            const counts = teamsCount(key);
+            const ok = counts.upper === 10 && counts.lower === 10;
             return (
               <button key={key} onClick={() => startEdit(key)} style={{
                 background: ok ? colors.ACTIVE_BG : colors.INPUT_BG,
                 border: `2px solid ${ok ? colors.BLUE : colors.BORDER}`, borderRadius: 10, padding: 12, cursor: "pointer", textAlign: "left",
               }}>
                 <div style={{ color: colors.TEXT, fontWeight: 800, fontSize: 14 }}>🌙 {cfg.label}</div>
-                <div style={{ color: ok ? colors.BLUE : colors.MUTED, fontSize: 12, marginTop: 3 }}>{n}/20 teams {ok && "✔"}</div>
+                <div style={{ color: ok ? colors.BLUE : colors.MUTED, fontSize: 12, marginTop: 3 }}>{counts.total}/20 ({counts.upper}U, {counts.lower}L) {ok && "✔"}</div>
               </button>
             );
           })}

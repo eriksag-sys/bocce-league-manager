@@ -10,7 +10,8 @@ export function shuffleArray(arr) {
 }
 
 export function getRandomTeams() {
-  return shuffleArray(BOCCE_TEAM_NAMES).slice(0, 20);
+  const names = shuffleArray(BOCCE_TEAM_NAMES).slice(0, 20);
+  return names.map((name, i) => ({ name, division: i < 10 ? "upper" : "lower" }));
 }
 
 export function formatDate(iso) {

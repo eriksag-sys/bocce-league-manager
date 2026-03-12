@@ -18,12 +18,39 @@ export default function ScoreModal({ matchup, maxPts, onSave, onClose }) {
   };
 
   const handleSave = () => {
-    const parsed = frames.map((f) => {
+    let valid = true;
+    let errMsg = "";
+    
+    const parsed = frames.map((f, i) => {
       const a = parseInt(f.a, 10), b = parseInt(f.b, 10);
-      if (isNaN(a) || isNaN(b)) return null;
+      // Empty check
+      if (isNaN(a) || isNaN(b)) {
+        if (f.a || f.b) { valid = false; errMsg = `Frame ${i+1} is incomplete.`; }
+        return null; // Empty frames are allowed conceptually, but if you partially fill one it fails.
+      }
+      
+      // Bounds check
+      if (a === b) { valid = false; errMsg = `Frame ${i+1} cannot end in a tie.`; }
+      if (a > maxPts || b > maxPts) { valid = false; errMsg = `Frame ${i+1} cannot exceed ${maxPts}.`; }
+      if (Math.max(a, b) !== maxPts) { valid = false; errMsg = `One team must reach exactly ${maxPts} points in Frame ${i+1}.`; }
+      
       return { a, b };
     });
+
+    if (!valid) {
+      alert(errMsg);
+      return;
+    }
     onSave(parsed);
+  };
+
+  const handleRandom = () => {
+    setFrames([0, 1, 2].map(() => {
+       const w = Math.random() > 0.5 ? 'a' : 'b';
+       const scoreW = maxPts;
+       const scoreL = Math.floor(Math.random() * maxPts); // 0 to maxPts-1
+       return w === 'a' ? { a: String(scoreW), b: String(scoreL) } : { a: String(scoreL), b: String(scoreW) };
+    }));
   };
 
   const handleClear = () => onSave([null, null, null]);
@@ -43,9 +70,12 @@ export default function ScoreModal({ matchup, maxPts, onSave, onClose }) {
       <div onClick={(e) => e.stopPropagation()} style={{ background: colors.PANEL, border: `2px solid ${colors.BORDER}`, borderRadius: 16, padding: 24, width: 520, maxWidth: "95vw" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
           <h3 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: colors.TEXT }}>Court {matchup.court} — Score</h3>
-          <span style={{ background: colors.CARD, padding: "3px 10px", borderRadius: 6, fontSize: 12, color: colors.MUTED, fontWeight: 600 }}>
-            {FRAMES} frames to {maxPts}
-          </span>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={handleRandom} title="Generate Valid Random Scores" style={{ background: colors.BLUE, border: "none", color: "#fff", borderRadius: 6, padding: "3px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>🎲 Random</button>
+            <span style={{ background: colors.CARD, padding: "3px 10px", borderRadius: 6, fontSize: 12, color: colors.MUTED, fontWeight: 600 }}>
+              {FRAMES} frames to {maxPts}
+            </span>
+          </div>
         </div>
         <div style={{ color: colors.MUTED, fontSize: 12, marginBottom: 16 }}>
           {typeof matchup.court === "number" ? "Indoor" : "Outdoor"} Court

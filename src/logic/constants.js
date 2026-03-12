@@ -43,5 +43,5 @@ export const LEAGUE_CONFIGS = {
 
 export const FRAMES = 3;
 
-export const emptyTeams = () => Array.from({ length: 20 }, () => "");
+export const emptyTeams = () => Array.from({ length: 20 }, (_, i) => ({ name: "", division: i < 10 ? "upper" : "lower" }));
 export const emptyFrames = () => [null, null, null]; // each frame: { a, b } or null

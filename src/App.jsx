@@ -56,11 +56,18 @@ export default function App() {
     Object.entries(LEAGUE_CONFIGS).forEach(([key, cfg]) => {
       const tKey = `${activeSeason}_${key}`;
       const teams = leagueTeams[tKey] || [];
-      if (teams.filter((t) => t.trim()).length === 20) {
+      
+      const valid = teams.filter((t) => typeof t === 'string' ? t.trim() : t?.name?.trim());
+      const upper = valid.filter((t, i) => (typeof t === 'string' ? i < 10 : t.division === 'upper')).length;
+      const lower = valid.filter((t, i) => (typeof t === 'string' ? i >= 10 : t.division === 'lower')).length;
+
+      if (upper === 10 && lower === 10) {
         const sd = seasonDates[activeSeason];
         const hols = holidays[activeSeason] || [];
         const dates = getLeagueDates(sd.start, sd.end, cfg.day, hols);
-        const sched = genSchedule(teams, dates);
+        // Map string array to object array if needed before generating schedule
+        const migrated = valid.map((t, i) => typeof t === 'string' ? { name: t, division: i < 10 ? 'upper' : 'lower' } : t);
+        const sched = genSchedule(migrated, dates);
         if (sched) next[tKey] = sched;
       }
     });
@@ -117,14 +124,25 @@ function CombinedView({ schedules, setSchedules, leagueTeams, activeSeason, setA
                  activeSeason={activeSeason} setActiveSeason={setActiveSeason} 
                  activeLeague={activeLeague} setActiveLeague={setActiveLeague}
                  isAdmin={isAdmin} 
-                 hideCourts={forceTab === "champions"}
+                 hideCourts={forceTab === "champions" || forceTab === "standings"}
              />
              {forceTab !== "champions" && (
-                 <StandingsView 
-                     schedules={schedules} 
-                     activeSeason={activeSeason} 
-                     activeLeague={activeLeague} 
-                 />
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 24, padding: "0 20px 40px 20px", maxWidth: 1200, margin: "0 auto", width: "100%", boxSizing: "border-box" }}>
+                     <StandingsView 
+                         schedules={schedules} 
+                         activeSeason={activeSeason} 
+                         activeLeague={activeLeague} 
+                         leagueTeams={leagueTeams}
+                         division="upper"
+                     />
+                     <StandingsView 
+                         schedules={schedules} 
+                         activeSeason={activeSeason} 
+                         activeLeague={activeLeague} 
+                         leagueTeams={leagueTeams}
+                         division="lower"
+                     />
+                 </div>
              )}
              {forceTab === "champions" && (
                  <ChampionsView 
