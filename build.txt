@@ -1,0 +1,31 @@
+
+> bocce-league-manager@0.0.0 build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[33m[plugin vite:esbuild] src/components/ScheduleView.jsx: [33mDuplicate key "border" in object literal[33m
+44 |        background: activeLeague === k ? (LEAGUE_CONFIGS[k].type === "daytime" ? colors.YELLOW : colors.BLUE) : colors....
+45 |        color: activeLeague === k ? (LEAGUE_CONFIGS[k].type === "daytime" ? "#000" : "#fff") : colors.MUTED,
+46 |        border: `1px solid ${activeLeague === k ? 'transparent' : colors.BORDER}`
+   |        ^
+47 |      }}>{LEAGUE_CONFIGS[k].shortLabel}</button>
+48 |    );
+[39m
+[33m[plugin vite:esbuild] src/components/ScheduleView.jsx: [33mDuplicate key "border" in object literal[33m
+191 |                    background: bgColor,
+192 |                    color: labelColor,
+193 |                    border: `1px solid ${i === weekIdx ? colors.BLUE : allDone ? colors.DONE_BORDER : colors.BORDER}`,
+    |                    ^
+194 |                    textDecoration: w.isRainedOut ? 'line-through' : 'none'
+195 |                  }}>
+[39m
+[32m✓[39m 51 modules transformed.
+[31m✗[39m Build failed in 578ms
+[31merror during build:
+[31mCould not resolve "../ThemeContext" from "src/components/ui/index.jsx"[31m
+file: [36mC:/Users/esagerdahl/.gemini/antigravity/scratch/bocce-league-manager/src/components/ui/index.jsx[31m
+    at getRollupError (file:///C:/Users/esagerdahl/.gemini/antigravity/scratch/bocce-league-manager/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at error (file:///C:/Users/esagerdahl/.gemini/antigravity/scratch/bocce-league-manager/node_modules/rollup/dist/es/shared/parseAst.js:398:42)
+    at ModuleLoader.handleInvalidResolvedId (file:///C:/Users/esagerdahl/.gemini/antigravity/scratch/bocce-league-manager/node_modules/rollup/dist/es/shared/node-entry.js:21710:24)
+    at file:///C:/Users/esagerdahl/.gemini/antigravity/scratch/bocce-league-manager/node_modules/rollup/dist/es/shared/node-entry.js:21670:26[39m

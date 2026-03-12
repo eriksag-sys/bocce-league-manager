@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "bocce-tournaments"
+  },
+  "targets": {
+    "bocce-tournaments": {
+      "hosting": {
+        "league": [
+          "bocce-league-manager"
+        ]
+      }
+    }
+  }
+}

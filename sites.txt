@@ -1,0 +1,10 @@
+(node:53892) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Sites for project [1mbocce-tournaments[22m
+
+[90m┌───────────────────[39m[90m┬───────────────────────────────────[39m[90m┬─────────────────┐[39m
+[90m│[39m[32m Site ID           [39m[90m│[39m[32m Default URL                       [39m[90m│[39m[32m App ID (if set) [39m[90m│[39m
+[90m├───────────────────[39m[90m┼───────────────────────────────────[39m[90m┼─────────────────┤[39m
+[90m│[39m bocce-tournaments [90m│[39m https://bocce-tournaments.web.app [90m│[39m --              [90m│[39m
+[90m└───────────────────[39m[90m┴───────────────────────────────────[39m[90m┴─────────────────┘[39m
