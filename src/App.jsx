@@ -80,7 +80,17 @@ export default function App() {
       <Header tab={tab} setTab={setTab} isAdmin={isAdmin} user={user} />
       
       {tab === "setup" && (
-        <SetupView seasonDates={seasonDates} setSeasonDates={setSeasonDates} holidays={holidays} setHolidays={setHolidays} leagueTeams={leagueTeams} setLeagueTeams={setLeagueTeams} onGenerate={handleGenerate} schedules={schedules} activeSeason={activeSeason} setActiveSeason={setActiveSeason} />
+        isAdmin ? (
+          <SetupView seasonDates={seasonDates} setSeasonDates={setSeasonDates} holidays={holidays} setHolidays={setHolidays} leagueTeams={leagueTeams} setLeagueTeams={setLeagueTeams} onGenerate={handleGenerate} schedules={schedules} activeSeason={activeSeason} setActiveSeason={setActiveSeason} />
+        ) : (
+          <div style={{ padding: "40px 20px", maxWidth: 1200, margin: "0 auto", textAlign: 'center' }}>
+            <div style={{ background: colors.CARD, border: `1px solid ${colors.BORDER}`, borderRadius: 12, padding: 40 }}>
+              <div style={{ fontSize: 40 }}>🔒</div>
+              <div style={{ color: colors.TEXT, fontSize: 18, marginTop: 10, fontWeight: 700 }}>Admin Access Required</div>
+              <div style={{ color: colors.MUTED, fontSize: 14, marginTop: 5 }}>Sign in using the button in the top right to configure league settings.</div>
+            </div>
+          </div>
+        )
       )}
 
       {(tab === "schedule" || tab === "standings" || tab === "champions") && (

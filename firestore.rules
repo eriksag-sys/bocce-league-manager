@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Rules for Bocce Tournament Scheduler
+    match /tournaments/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Rules for Bocce League Manager
+    match /appData/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
