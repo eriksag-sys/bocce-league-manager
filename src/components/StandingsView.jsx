@@ -34,8 +34,21 @@ export default function StandingsView({ schedules, activeSeason, activeLeague })
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 600 }}>
               <thead>
                 <tr style={{ background: colors.ACTIVE_BG }}>
-                  {["#", "Team", "MW", "ML", "MT", "Pts", "FW", "FL", "PF", "PA", "Diff", "GP"].map((h) => (
-                    <th key={h} style={{ padding: "10px 8px", textAlign: h === "Team" ? "left" : "center", fontWeight: 800, color: colors.MUTED, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, borderBottom: `1px solid ${colors.BORDER}` }}>{h}</th>
+                  {[
+                    { label: "#", title: "Rank" },
+                    { label: "Team", title: "Team Name" },
+                    { label: "MW", title: "Match Wins" },
+                    { label: "ML", title: "Match Losses" },
+                    { label: "MT", title: "Match Ties" },
+                    { label: "Pts", title: "Points (2 for Win, 1 for Tie)" },
+                    { label: "FW", title: "Frame Wins" },
+                    { label: "FL", title: "Frame Losses" },
+                    { label: "PF", title: "Points For (Total points scored by team)" },
+                    { label: "PA", title: "Points Against (Total points given up by team)" },
+                    { label: "Diff", title: "Point Differential (PF minus PA)" },
+                    { label: "GP", title: "Games Played" }
+                  ].map((h) => (
+                    <th key={h.label} title={h.title} style={{ padding: "10px 8px", textAlign: h.label === "Team" ? "left" : "center", fontWeight: 800, color: colors.MUTED, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, borderBottom: `1px solid ${colors.BORDER}`, cursor: 'help' }}>{h.label}</th>
                   ))}
                 </tr>
               </thead>
