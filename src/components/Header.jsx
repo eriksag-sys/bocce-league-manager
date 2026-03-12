@@ -75,6 +75,13 @@ export default function Header({ tab, setTab, isAdmin, user }) {
                             Sign Out
                         </Btn>
                     </>
+                ) : user ? (
+                    <>
+                        <span style={{ fontSize: 11, color: colors.RED, letterSpacing: 0.5 }} title={user.email}>
+                            Logged in as {user.email} (Not Admin)
+                        </span>
+                        <Btn variant="secondary" style={{ fontSize: 10, padding: '4px 10px' }} onClick={signOut}>Sign Out</Btn>
+                    </>
                 ) : (
                     <Btn variant="secondary" style={{ fontSize: 11, padding: '5px 12px' }}
                         onClick={signInWithGoogle}>

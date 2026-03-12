@@ -6,7 +6,7 @@ import { auth, signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut }
 // Only these email addresses get admin access.
 // Everyone else sees the read-only public view.
 const ADMIN_EMAILS = [
-    'esagerdahl@gmail.com', 'ejsgolf@gmail.com'
+    'esagerdahl@gmail.com', 'ejsgolf@gmail.com', 'eriksag@gmail.com'
 ];
 
 /**
@@ -36,6 +36,7 @@ export const signInWithGoogle = () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).catch(err => {
         console.error("Popup sign in failed", err);
+        alert(`Sign in failed: ${err.message}`);
     });
 };
 
